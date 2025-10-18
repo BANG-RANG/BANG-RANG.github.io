@@ -25,13 +25,27 @@
             border-radius: 20px;
             text-align: center;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
         .title-image {
-            max-width: 400px;
-            width: 80%;
+            max-width: 500px;
+            width: 90%;
             height: auto;
-            margin-bottom: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .horse-image {
+            width: 350px;
+            height: auto;
+            margin-bottom: 40px;
+            animation: bounce 2s infinite;
+        }
+        
+        .text-content {
+            margin-top: 20px;
         }
         
         p {
@@ -44,13 +58,6 @@
             font-size: 0.9em;
         }
         
-        .horse-image {
-            width: 350px;
-            height: auto;
-            margin-bottom: 20px;
-            animation: bounce 2s infinite;
-        }
-        
         @keyframes bounce {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-20px); }
@@ -59,11 +66,13 @@
 </head>
 <body>
     <div class="container">
-        <img src="horse_.png" alt="horse" class="horse-image">
         <img src="title.png" alt="방랑일지" class="title-image">
-        <p>사이트 공사중! 🚧</p>
-        <p class="small-text">곧 멋진 게임과 작품들을 만나보실 수 있어요.</p>
-        <p><strong>Coming Soon...</strong></p>
+        <img src="horse_.png" alt="horse" class="horse-image">
+        <div class="text-content">
+            <p>사이트 공사중! 🚧</p>
+            <p class="small-text">곧 멋진 게임과 작품들을 만나보실 수 있어요.</p>
+            <p><strong>Coming Soon...</strong></p>
+        </div>
     </div>
 </body>
 </html>
