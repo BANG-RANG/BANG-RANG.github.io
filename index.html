@@ -58,18 +58,19 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding-top: 80px;
+            padding: 100px 20px 40px 20px;
         }
         
         .title-image {
-            max-width: 500px;
-            width: 90%;
+            width: 80%;
+            max-width: 800px;
             height: auto;
             margin-bottom: 40px;
         }
         
         .horse-image {
-            width: 350px;
+            width: 60%;
+            max-width: 400px;
             height: auto;
             margin-bottom: 40px;
             animation: bounce 2s infinite;
@@ -89,6 +90,61 @@
         @keyframes bounce {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-20px); }
+        }
+        
+        /* 태블릿 (768px 이하) */
+        @media (max-width: 768px) {
+            .nav-menu {
+                gap: 30px;
+            }
+            
+            .nav-menu a {
+                font-size: 1em;
+            }
+            
+            .title-image {
+                width: 85%;
+            }
+            
+            .horse-image {
+                width: 70%;
+            }
+            
+            p {
+                font-size: 1.1em;
+            }
+        }
+        
+        /* 모바일 (480px 이하) */
+        @media (max-width: 480px) {
+            .navbar {
+                padding: 15px 0;
+            }
+            
+            .nav-menu {
+                gap: 15px;
+                flex-wrap: wrap;
+            }
+            
+            .nav-menu a {
+                font-size: 0.9em;
+            }
+            
+            .title-image {
+                width: 90%;
+            }
+            
+            .horse-image {
+                width: 80%;
+            }
+            
+            p {
+                font-size: 1em;
+            }
+            
+            .main-content {
+                padding: 80px 15px 30px 15px;
+            }
         }
     </style>
 </head>
