@@ -75,9 +75,46 @@
             color: #ffffff;
         }
         
+        /* 서브 카테고리 바 */
+        .sub-navbar {
+            background: #2a2a2a;
+            width: 100%;
+            padding: 12px 20px;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .sub-menu {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            list-style: none;
+            font-family: 'Hakgyoansim', 'Batang', serif;
+        }
+        
+        .sub-menu li {
+            display: inline;
+        }
+        
+        .sub-menu a {
+            color: #999999;
+            text-decoration: none;
+            font-size: 1em;
+            transition: color 0.3s ease;
+        }
+        
+        .sub-menu a:hover,
+        .sub-menu a.active {
+            color: #ffffff;
+        }
+        
         /* 갤러리 컨테이너 */
         .gallery-container {
-            padding: 100px 20px 40px 20px;
+            padding: 140px 20px 40px 20px;
             max-width: 1400px;
             margin: 0 auto;
         }
@@ -111,6 +148,17 @@
             width: 100%;
             height: auto;
             display: block;
+        }
+        
+        /* 카테고리별 숨김/보임 */
+        .category-section {
+            display: none;
+        }
+        
+        .category-section.active {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
         }
         
         /* 라이트박스 (이미지 클릭 시 크게 보기) */
@@ -152,12 +200,25 @@
                 height: 35px;
             }
             
-            .gallery-grid {
+            .gallery-grid,
+            .category-section.active {
                 grid-template-columns: 1fr;
             }
             
             .gallery-container {
-                padding-top: 100px;
+                padding-top: 150px;
+            }
+            
+            .sub-navbar {
+                top: 65px;
+            }
+            
+            .sub-menu {
+                gap: 25px;
+            }
+            
+            .sub-menu a {
+                font-size: 0.9em;
             }
             
             .nav-menu {
@@ -192,8 +253,22 @@
                 font-size: 0.9em;
             }
             
+            .sub-navbar {
+                top: 90px;
+                padding: 10px;
+            }
+            
+            .sub-menu {
+                gap: 15px;
+                flex-wrap: wrap;
+            }
+            
+            .sub-menu a {
+                font-size: 0.85em;
+            }
+            
             .gallery-container {
-                padding-top: 130px;
+                padding-top: 180px;
             }
         }
     </style>
@@ -216,57 +291,71 @@
         <div style="width: 40px;"></div>
     </nav>
     
+    <!-- 서브 카테고리 -->
+    <nav class="sub-navbar">
+        <ul class="sub-menu">
+            <li><a href="#" class="sub-link active" data-category="projectN">Project N</a></li>
+            <li>|</li>
+            <li><a href="#" class="sub-link" data-category="projectD">Project D</a></li>
+            <li>|</li>
+            <li><a href="#" class="sub-link" data-category="projectM">Project M</a></li>
+            <li>|</li>
+            <li><a href="#" class="sub-link" data-category="extra">Extra</a></li>
+        </ul>
+    </nav>
+    
     <!-- 갤러리 -->
     <div class="gallery-container">
-        <div class="gallery-grid">
-            <!-- 1번 - 왼쪽 위 -->
+        <!-- Project N (기본 표시) -->
+        <div class="category-section active" id="projectN">
             <div class="gallery-item">
                 <video autoplay loop muted playsinline>
                     <source src="images/0_1.mp4" type="video/mp4">
                 </video>
             </div>
             
-            <!-- 2번 - 오른쪽 위 -->
             <div class="gallery-item">
                 <video autoplay loop muted playsinline>
                     <source src="images/0_3.mp4" type="video/mp4">
                 </video>
             </div>
             
-            <!-- 3번 - 왼쪽 -->
             <div class="gallery-item">
                 <video autoplay loop muted playsinline>
                     <source src="images/0_2.mp4" type="video/mp4">
                 </video>
             </div>
             
-            <!-- 4번 - 오른쪽 -->
             <div class="gallery-item">
                 <video autoplay loop muted playsinline>
                     <source src="images/0_4.mp4" type="video/mp4">
                 </video>
             </div>
             
-            <!-- 5번 - 왼쪽 -->
             <div class="gallery-item">
                 <img src="images/0_5.jpg" alt="작품 5">
             </div>
             
-            <!-- 6번 - 오른쪽 -->
             <div class="gallery-item">
                 <img src="images/0_6.jpg" alt="작품 6">
             </div>
             
-            <!-- 7번 - 왼쪽 -->
-            <div class="gallery-item">
-                <img src="images/0_7.jpg" alt="작품 7">
-            </div>
-            
-            <!-- 8번 - 오른쪽 -->
-            
-            
-            <!-- 더 추가하려면 위 형식 복사 -->
-            
+            <!-- Project N 작품 더 추가 -->
+        </div>
+        
+        <!-- Project D -->
+        <div class="category-section" id="projectD">
+            <!-- Project D 작품 추가 -->
+        </div>
+        
+        <!-- Project M -->
+        <div class="category-section" id="projectM">
+            <!-- Project M 작품 추가 -->
+        </div>
+        
+        <!-- Extra -->
+        <div class="category-section" id="extra">
+            <!-- Extra 작품 추가 -->
         </div>
     </div>
     
@@ -277,6 +366,27 @@
     </div>
     
     <script>
+        // 서브 카테고리 필터
+        const subLinks = document.querySelectorAll('.sub-link');
+        const categorySections = document.querySelectorAll('.category-section');
+        
+        subLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // 활성화 상태 변경
+                subLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                
+                // 카테고리 표시
+                const category = link.getAttribute('data-category');
+                categorySections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                document.getElementById(category).classList.add('active');
+            });
+        });
+        
         // 이미지 클릭하면 크게 보기
         const galleryImages = document.querySelectorAll('.gallery-item img');
         const lightbox = document.getElementById('lightbox');
@@ -295,3 +405,10 @@
         });
         
         lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                lightbox.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
