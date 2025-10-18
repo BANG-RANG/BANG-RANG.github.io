@@ -73,9 +73,9 @@
             color: #000000;
         }
         
-        /* 테트리스 스타일 갤러리 (Masonry Layout) */
+        /* 테트리스 스타일 갤러리 */
         .masonry-gallery {
-            column-count: 3;
+            column-count: 2;
             column-gap: 20px;
         }
         
@@ -96,31 +96,21 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
         }
         
-        .gallery-item img {
+        .gallery-item video {
             width: 100%;
             height: auto;
             display: block;
-        }
-        
-        /* 반응형 - 태블릿 */
-        @media (max-width: 992px) {
-            .masonry-gallery {
-                column-count: 2;
-            }
-            
-            .gallery-title {
-                font-size: 2em;
-            }
+            border-radius: 10px;
         }
         
         /* 반응형 - 모바일 */
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             .masonry-gallery {
                 column-count: 1;
             }
             
             .gallery-title {
-                font-size: 1.5em;
+                font-size: 1.8em;
             }
             
             .nav-menu {
@@ -131,40 +121,6 @@
             .nav-menu a {
                 font-size: 0.9em;
             }
-        }
-        
-        /* 라이트박스 (이미지 클릭 시 크게 보기) */
-        .lightbox {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .lightbox.active {
-            display: flex;
-        }
-        
-        .lightbox img {
-            max-width: 90%;
-            max-height: 90%;
-            object-fit: contain;
-        }
-        
-        .lightbox-close {
-            position: absolute;
-            top: 30px;
-            right: 30px;
-            color: white;
-            font-size: 40px;
-            cursor: pointer;
-            font-family: Arial, sans-serif;
         }
     </style>
 </head>
@@ -189,53 +145,30 @@
         <h1 class="gallery-title">그림 여행 🎨</h1>
         
         <div class="masonry-gallery">
-            <!-- 이미지 추가하는 곳 -->
             <div class="gallery-item">
-                <img src="images/art1.jpg" alt="작품 1">
+                <video autoplay loop muted playsinline>
+                    <source src="images/0_1.mp4" type="video/mp4">
+                </video>
             </div>
             
             <div class="gallery-item">
-                <img src="images/art2.png" alt="작품 2">
+                <video autoplay loop muted playsinline>
+                    <source src="images/0_2.mp4" type="video/mp4">
+                </video>
             </div>
             
             <div class="gallery-item">
-                <img src="images/art3.jpg" alt="작품 3">
+                <video autoplay loop muted playsinline>
+                    <source src="images/0_3.mp4" type="video/mp4">
+                </video>
             </div>
             
-            <!-- 이미지 더 추가하려면 위 형식 복사 -->
-            
+            <div class="gallery-item">
+                <video autoplay loop muted playsinline>
+                    <source src="images/0_4.mp4" type="video/mp4">
+                </video>
+            </div>
         </div>
     </div>
-    
-    <!-- 라이트박스 (이미지 크게 보기) -->
-    <div class="lightbox" id="lightbox">
-        <span class="lightbox-close">&times;</span>
-        <img src="" alt="" id="lightbox-img">
-    </div>
-    
-    <script>
-        // 이미지 클릭하면 크게 보기
-        const galleryItems = document.querySelectorAll('.gallery-item img');
-        const lightbox = document.getElementById('lightbox');
-        const lightboxImg = document.getElementById('lightbox-img');
-        const closeBtn = document.querySelector('.lightbox-close');
-        
-        galleryItems.forEach(item => {
-            item.addEventListener('click', () => {
-                lightboxImg.src = item.src;
-                lightbox.classList.add('active');
-            });
-        });
-        
-        closeBtn.addEventListener('click', () => {
-            lightbox.classList.remove('active');
-        });
-        
-        lightbox.addEventListener('click', (e) => {
-            if (e.target === lightbox) {
-                lightbox.classList.remove('active');
-            }
-        });
-    </script>
 </body>
 </html>
