@@ -94,6 +94,7 @@
             background: #87CEEB;
             max-width: 100%;
             display: block;
+            cursor: pointer;
         }
         
         .controls {
@@ -214,20 +215,31 @@
         let score = 0;
         let animationId;
 
+        // 마우스 클릭 감지
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // 타이틀에서 시작 버튼 클릭
+            if (gameState === 'title') {
+                if (x >= 300 && x <= 500 && y >= 320 && y <= 380) {
+                    startGame();
+                }
+            }
+            
+            // 게임오버에서 재시작 버튼 클릭
+            if (gameState === 'gameover') {
+                if (x >= 300 && x <= 500 && y >= 400 && y <= 460) {
+                    restartGame();
+                }
+            }
+        });
+
         // 키 입력
         const keys = {};
         document.addEventListener('keydown', (e) => {
             keys[e.code] = true;
-            
-            // 타이틀에서 시작
-            if (gameState === 'title' && e.code === 'Space') {
-                startGame();
-            }
-            
-            // 게임오버에서 재시작
-            if (gameState === 'gameover' && e.code === 'Space') {
-                restartGame();
-            }
         });
         document.addEventListener('keyup', (e) => keys[e.code] = false);
 
@@ -252,18 +264,24 @@
             return c;
         }
 
-        // 적 이미지 생성
-        function createEnemyImage() {
+        // 적 이미지 생성 (스테이지별 색상)
+        function createEnemyImage(stage) {
             const c = document.createElement('canvas');
             c.width = 40;
             c.height = 40;
             const ct = c.getContext('2d');
             
-            ct.fillStyle = '#F44336';
+            const colors = ['#F44336', '#FF5722', '#9C27B0', '#673AB7', '#000000'];
+            ct.fillStyle = colors[stage - 1];
             ct.fillRect(5, 10, 30, 25);
-            ct.fillStyle = '#000';
+            ct.fillStyle = '#FFF';
             ct.fillRect(10, 15, 5, 5);
             ct.fillRect(25, 15, 5, 5);
+            // 이빨
+            ct.fillStyle = '#FFF';
+            ct.fillRect(12, 25, 3, 5);
+            ct.fillRect(18, 25, 3, 5);
+            ct.fillRect(24, 25, 3, 5);
             
             return c;
         }
@@ -319,23 +337,97 @@
 
         // 적들
         let enemies = [];
-        const enemyImage = createEnemyImage();
         let enemySpawnTimer = 0;
+
+        // 플랫폼
+        let platforms = [];
 
         // 배경 스크롤
         let bgScroll = 0;
 
         // 중력
         const gravity = 0.8;
-        const groundY = 500;
+        const groundY = 550;
 
         // 스테이지 데이터
         const stages = [
-            { name: '숲', bgColor1: '#228B22', bgColor2: '#90EE90', enemyCount: 5 },
-            { name: '사막', bgColor1: '#DEB887', bgColor2: '#F4A460', enemyCount: 7 },
-            { name: '설원', bgColor1: '#87CEEB', bgColor2: '#E0F6FF', enemyCount: 8 },
-            { name: '화산', bgColor1: '#8B0000', bgColor2: '#FF4500', enemyCount: 10 },
-            { name: '성', bgColor1: '#2F4F4F', bgColor2: '#696969', enemyCount: 12 }
+            { 
+                name: '초원', 
+                bgColor1: '#87CEEB', 
+                bgColor2: '#90EE90', 
+                groundColor: '#228B22',
+                enemyCount: 8,
+                enemyHp: 2,
+                enemySpeed: 1.5,
+                platforms: [
+                    {x: 200, y: 450, width: 100, height: 20},
+                    {x: 400, y: 400, width: 120, height: 20},
+                    {x: 600, y: 350, width: 100, height: 20}
+                ]
+            },
+            { 
+                name: '사막', 
+                bgColor1: '#F4A460', 
+                bgColor2: '#DEB887', 
+                groundColor: '#D2691E',
+                enemyCount: 10,
+                enemyHp: 3,
+                enemySpeed: 2,
+                platforms: [
+                    {x: 150, y: 480, width: 80, height: 15},
+                    {x: 300, y: 420, width: 100, height: 15},
+                    {x: 500, y: 380, width: 90, height: 15},
+                    {x: 650, y: 320, width: 100, height: 15}
+                ]
+            },
+            { 
+                name: '설원', 
+                bgColor1: '#E0F6FF', 
+                bgColor2: '#B0E0E6', 
+                groundColor: '#FFFFFF',
+                enemyCount: 12,
+                enemyHp: 4,
+                enemySpeed: 2.5,
+                platforms: [
+                    {x: 180, y: 460, width: 90, height: 20},
+                    {x: 350, y: 400, width: 80, height: 20},
+                    {x: 520, y: 360, width: 100, height: 20},
+                    {x: 200, y: 300, width: 120, height: 20}
+                ]
+            },
+            { 
+                name: '화산', 
+                bgColor1: '#8B0000', 
+                bgColor2: '#FF4500', 
+                groundColor: '#4B0000',
+                enemyCount: 15,
+                enemyHp: 5,
+                enemySpeed: 3,
+                platforms: [
+                    {x: 160, y: 470, width: 100, height: 15},
+                    {x: 340, y: 410, width: 90, height: 15},
+                    {x: 500, y: 360, width: 110, height: 15},
+                    {x: 650, y: 300, width: 100, height: 15},
+                    {x: 300, y: 250, width: 120, height: 15}
+                ]
+            },
+            { 
+                name: '마왕성', 
+                bgColor1: '#2F4F4F', 
+                bgColor2: '#1C1C1C', 
+                groundColor: '#000000',
+                enemyCount: 20,
+                enemyHp: 6,
+                enemySpeed: 3.5,
+                platforms: [
+                    {x: 140, y: 480, width: 110, height: 20},
+                    {x: 320, y: 420, width: 100, height: 20},
+                    {x: 500, y: 370, width: 90, height: 20},
+                    {x: 650, y: 310, width: 110, height: 20},
+                    {x: 200, y: 260, width: 130, height: 20},
+                    {x: 450, y: 200, width: 100, height: 20}
+                ]
+            }
         ];
 
         let enemiesKilled = 0;
@@ -350,14 +442,17 @@
 
         // 적 생성
         function spawnEnemy() {
+            const stageData = stages[currentStage - 1];
             enemies.push({
                 x: canvas.width + 50,
                 y: groundY - 40,
                 width: 40,
                 height: 40,
-                hp: 2,
-                speed: 2 + Math.random(),
-                image: enemyImage
+                hp: stageData.enemyHp,
+                maxHp: stageData.enemyHp,
+                speed: stageData.enemySpeed + Math.random() * 0.5,
+                image: createEnemyImage(currentStage),
+                onPlatform: false
             });
         }
 
@@ -374,7 +469,7 @@
                     enemy.hp--;
                     if (enemy.hp <= 0) {
                         enemies.splice(index, 1);
-                        score += 10;
+                        score += 10 * currentStage;
                         enemiesKilled++;
                         player.specialGauge = Math.min(player.maxSpecial, player.specialGauge + 10);
                     }
@@ -407,12 +502,16 @@
             // 화면의 모든 적 제거
             const killedCount = enemies.length;
             enemies = [];
-            score += killedCount * 20;
+            score += killedCount * 20 * currentStage;
             enemiesKilled += killedCount;
-            
-            // 이펙트 표시
-            ctx.fillStyle = 'rgba(255, 255, 0, 0.5)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // 스테이지 로드
+        function loadStage() {
+            const stageData = stages[currentStage - 1];
+            platforms = JSON.parse(JSON.stringify(stageData.platforms));
+            enemies = [];
+            enemySpawnTimer = 0;
         }
 
         // 게임 업데이트
@@ -427,7 +526,6 @@
                 player.velX = -player.speed;
             } else if (keys['KeyD']) {
                 player.velX = player.speed;
-                bgScroll += 2; // 배경 스크롤
             } else {
                 player.velX = 0;
             }
@@ -459,6 +557,18 @@
             player.x += player.velX;
             player.y += player.velY;
 
+            // 플랫폼 충돌
+            player.grounded = false;
+            platforms.forEach(platform => {
+                if (checkCollision(player, platform)) {
+                    if (player.velY > 0 && player.y + player.height - player.velY < platform.y + 10) {
+                        player.y = platform.y - player.height;
+                        player.velY = 0;
+                        player.grounded = true;
+                    }
+                }
+            });
+
             // 땅 충돌
             if (player.y >= groundY - player.height) {
                 player.y = groundY - player.height;
@@ -480,7 +590,7 @@
                         enemies[i].hp--;
                         if (enemies[i].hp <= 0) {
                             enemies.splice(i, 1);
-                            score += 10;
+                            score += 10 * currentStage;
                             enemiesKilled++;
                             player.specialGauge = Math.min(player.maxSpecial, player.specialGauge + 5);
                         }
@@ -493,6 +603,29 @@
 
             // 적 업데이트
             enemies.forEach((enemy, index) => {
+                // 중력 적용
+                enemy.velY = (enemy.velY || 0) + gravity;
+                enemy.y += enemy.velY || 0;
+
+                // 플랫폼 충돌
+                enemy.onPlatform = false;
+                platforms.forEach(platform => {
+                    if (checkCollision(enemy, platform)) {
+                        if (enemy.velY > 0 && enemy.y + enemy.height - enemy.velY < platform.y + 10) {
+                            enemy.y = platform.y - enemy.height;
+                            enemy.velY = 0;
+                            enemy.onPlatform = true;
+                        }
+                    }
+                });
+
+                // 땅 충돌
+                if (enemy.y >= groundY - enemy.height) {
+                    enemy.y = groundY - enemy.height;
+                    enemy.velY = 0;
+                    enemy.onPlatform = true;
+                }
+
                 enemy.x -= enemy.speed;
                 
                 // 플레이어와 충돌
@@ -511,7 +644,7 @@
 
             // 적 생성
             enemySpawnTimer++;
-            if (enemySpawnTimer > 100) {
+            if (enemySpawnTimer > 80) {
                 spawnEnemy();
                 enemySpawnTimer = 0;
             }
@@ -522,7 +655,7 @@
                 if (currentStage < 5) {
                     currentStage++;
                     enemiesKilled = 0;
-                    enemies = [];
+                    loadStage();
                     player.hp = Math.min(player.maxHp, player.hp + 2);
                 } else {
                     // 게임 클리어
@@ -533,8 +666,9 @@
 
         // 그리기
         function draw() {
+            const stageData = stages[Math.min(currentStage, 5) - 1];
+            
             // 배경
-            const stageData = stages[currentStage - 1];
             const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
             gradient.addColorStop(0, stageData.bgColor1);
             gradient.addColorStop(1, stageData.bgColor2);
@@ -543,47 +677,83 @@
 
             // 타이틀 화면
             if (gameState === 'title') {
-                ctx.fillStyle = '#000';
-                ctx.font = 'bold 48px Arial';
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = '#FFD700';
+                ctx.font = 'bold 56px Arial';
                 ctx.textAlign = 'center';
-                ctx.fillText('⚔️ 액션 어드벤처', canvas.width / 2, 200);
+                ctx.fillText('⚔️ 액션 어드벤처', canvas.width / 2, 180);
                 
-                ctx.font = '24px Arial';
-                ctx.fillText('SPACE를 눌러 시작', canvas.width / 2, 350);
+                ctx.fillStyle = '#FFF';
+                ctx.font = '20px Arial';
+                ctx.fillText('5개의 스테이지를 클리어하라!', canvas.width / 2, 240);
                 
-                ctx.font = '18px Arial';
-                ctx.fillText('A/D: 이동 | W: 점프', canvas.width / 2, 420);
-                ctx.fillText('J: 주먹 | K: 총 | L: 필살기', canvas.width / 2, 450);
+                // 시작 버튼
+                ctx.fillStyle = '#4CAF50';
+                ctx.fillRect(300, 320, 200, 60);
+                ctx.strokeStyle = '#2E7D32';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(300, 320, 200, 60);
+                ctx.fillStyle = '#FFF';
+                ctx.font = 'bold 24px Arial';
+                ctx.fillText('게임 시작', canvas.width / 2, 358);
+                
+                ctx.font = '16px Arial';
+                ctx.fillStyle = '#DDD';
+                ctx.fillText('A/D: 이동 | W: 점프', canvas.width / 2, 440);
+                ctx.fillText('J: 주먹 | K: 총 | L: 필살기', canvas.width / 2, 470);
                 
                 return;
             }
 
             // 게임오버 화면
             if (gameState === 'gameover') {
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 
                 ctx.fillStyle = '#FFF';
                 ctx.font = 'bold 48px Arial';
                 ctx.textAlign = 'center';
                 
-                if (currentStage >= 5 && enemiesKilled >= stages[4].enemyCount) {
-                    ctx.fillText('🎉 게임 클리어!', canvas.width / 2, 250);
+                if (currentStage > 5 || (currentStage === 5 && enemiesKilled >= stages[4].enemyCount)) {
+                    ctx.fillStyle = '#FFD700';
+                    ctx.fillText('🎉 게임 클리어!', canvas.width / 2, 220);
                 } else {
-                    ctx.fillText('💀 게임 오버', canvas.width / 2, 250);
+                    ctx.fillStyle = '#FF5252';
+                    ctx.fillText('💀 게임 오버', canvas.width / 2, 220);
                 }
                 
-                ctx.font = '24px Arial';
-                ctx.fillText('최종 점수: ' + score, canvas.width / 2, 320);
-                ctx.fillText('도달 스테이지: ' + currentStage, canvas.width / 2, 360);
-                ctx.fillText('SPACE를 눌러 재시작', canvas.width / 2, 420);
+                ctx.fillStyle = '#FFF';
+                ctx.font = '28px Arial';
+                ctx.fillText('최종 점수: ' + score, canvas.width / 2, 290);
+                ctx.fillText('도달 스테이지: ' + currentStage, canvas.width / 2, 330);
+                
+                // 재시작 버튼
+                ctx.fillStyle = '#2196F3';
+                ctx.fillRect(300, 400, 200, 60);
+                ctx.strokeStyle = '#1565C0';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(300, 400, 200, 60);
+                ctx.fillStyle = '#FFF';
+                ctx.font = 'bold 24px Arial';
+                ctx.fillText('다시 시작', canvas.width / 2, 438);
                 
                 return;
             }
 
             // 땅
-            ctx.fillStyle = '#654321';
+            ctx.fillStyle = stageData.groundColor;
             ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
+            
+            // 플랫폼
+            ctx.fillStyle = '#654321';
+            platforms.forEach(platform => {
+                ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+                ctx.strokeStyle = '#4B3621';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(platform.x, platform.y, platform.width, platform.height);
+            });
 
             // 플레이어
             ctx.drawImage(player.image, player.x, player.y);
@@ -606,8 +776,8 @@
                 // 적 HP 바
                 ctx.fillStyle = '#000';
                 ctx.fillRect(enemy.x, enemy.y - 10, enemy.width, 5);
-                ctx.fillStyle = '#0F0';
-                ctx.fillRect(enemy.x, enemy.y - 10, enemy.width * (enemy.hp / 2), 5);
+                ctx.fillStyle = enemy.hp > enemy.maxHp / 2 ? '#0F0' : '#FF0';
+                ctx.fillRect(enemy.x, enemy.y - 10, enemy.width * (enemy.hp / enemy.maxHp), 5);
             });
 
             // UI - 체력 (하트)
@@ -619,9 +789,6 @@
                     ctx.lineWidth = 2;
                     ctx.beginPath();
                     ctx.moveTo(20 + i * 35, 30 + 25 * 0.3);
-                    ctx.bezierCurveTo(20 + i * 35, 30, 20 + i * 35 - 25 / 2, 30, 20 + i * 35 - 25 / 2, 30 + 25 * 0.3);
-                    ctx.bezierCurveTo(20 + i * 35 - 25 / 2, 30 + 25 * 0.6, 20 + i * 35, 30 + 25, 20 + i * 35, 30 + 25);
-                    ctx.bezierCurveTo(20 + i * 35, 30 + 25, 20 + i * 35 + 25 / 2, 30 + 25 * 0.6, 20 + i * 35 + 25 / 2, 30 + 25 * 0.3);
                     ctx.bezierCurveTo(20 + i * 35 + 25 / 2, 30, 20 + i * 35, 30, 20 + i * 35, 30 + 25 * 0.3);
                     ctx.stroke();
                 }
@@ -666,10 +833,14 @@
             player.y = 450;
             player.hp = 5;
             player.specialGauge = 0;
+            player.velX = 0;
+            player.velY = 0;
             
             bullets = [];
             enemies = [];
             bgScroll = 0;
+            
+            loadStage();
         }
 
         // 게임 재시작
@@ -681,4 +852,7 @@
         gameLoop();
     </script>
 </body>
-</html>
+</html>urveTo(20 + i * 35, 30, 20 + i * 35 - 25 / 2, 30, 20 + i * 35 - 25 / 2, 30 + 25 * 0.3);
+                    ctx.bezierCurveTo(20 + i * 35 - 25 / 2, 30 + 25 * 0.6, 20 + i * 35, 30 + 25, 20 + i * 35, 30 + 25);
+                    ctx.bezierCurveTo(20 + i * 35, 30 + 25, 20 + i * 35 + 25 / 2, 30 + 25 * 0.6, 20 + i * 35 + 25 / 2, 30 + 25 * 0.3);
+                    ctx.bezierC
