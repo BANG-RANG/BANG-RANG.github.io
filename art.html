@@ -27,20 +27,36 @@
         .navbar {
             background: #000000;
             width: 100%;
-            padding: 20px 0;
+            padding: 15px 20px;
             position: fixed;
             top: 0;
             left: 0;
             z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
         
+        /* 홈 아이콘 */
+        .home-icon {
+            height: 40px;
+            width: auto;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .home-icon:hover {
+            transform: scale(1.1);
+        }
+        
+        /* 메뉴 */
         .nav-menu {
             display: flex;
-            justify-content: center;
             align-items: center;
             gap: 50px;
             list-style: none;
             font-family: 'Hakgyoansim', 'Batang', serif;
+            margin: 0 auto;
         }
         
         .nav-menu li {
@@ -94,15 +110,42 @@
             display: block;
         }
         
-        /* 반응형 - 모바일 */
+        /* 반응형 - 태블릿 */
         @media (max-width: 768px) {
+            .home-icon {
+                height: 35px;
+            }
+            
             .masonry-gallery {
                 column-count: 1;
             }
             
             .nav-menu {
+                gap: 30px;
+            }
+            
+            .nav-menu a {
+                font-size: 1em;
+            }
+        }
+        
+        /* 반응형 - 모바일 */
+        @media (max-width: 480px) {
+            .navbar {
+                padding: 10px 15px;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .home-icon {
+                height: 30px;
+                align-self: flex-start;
+            }
+            
+            .nav-menu {
                 gap: 15px;
                 flex-wrap: wrap;
+                justify-content: center;
             }
             
             .nav-menu a {
@@ -114,9 +157,10 @@
 <body>
     <!-- 상단 메뉴 -->
     <nav class="navbar">
+        <a href="index.html">
+            <img src="homeicon.png" alt="홈" class="home-icon">
+        </a>
         <ul class="nav-menu">
-            <li><a href="index.html">홈</a></li>
-            <li>|</li>
             <li><a href="art.html" class="active">그림</a></li>
             <li>|</li>
             <li><a href="#games">웹 게임</a></li>
@@ -125,6 +169,7 @@
             <li>|</li>
             <li><a href="#about">소개</a></li>
         </ul>
+        <div style="width: 40px;"></div> <!-- 균형 맞추기 -->
     </nav>
     
     <!-- 갤러리 -->
